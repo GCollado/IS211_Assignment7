@@ -38,15 +38,11 @@ class Game(Player):
                     response = input(r_or_h_message).lower()
                     if response == 'r':
                         turn_total += die_roll
-                        invalid_answer = True
                     elif response == 'h':
                         self.player_score += turn_total
                         turn_total = 0
-                        invalid_answer = False
-                        break
                     else:
                         print("Please enter valid response.")
-                        continue
             else:
                 turn_total = 0
                 continue
@@ -56,17 +52,46 @@ class Game(Player):
                 winner = True
                 break
 
+    def multiplayer_game(self):
+        invalid_answer = True
+        turn_total= 0
+        display_message="You rolled a {}. Your roll total is {}. Your current score is {}."
+        r_or_h_message="Would you like to roll(r) or hold(h)? "
+        winner = False
+        for self.get_player_name in players:
+            while not winner:
+                die_roll = self.get_die_roll()
+                if die_roll != 1:
+                    turn_total += die_roll
+                    while invalid_answer:
+                        print(display_message.format(die_roll, turn_total, self.player_score))
+                        response = input(r_or_h_message).lower()
+                        if response == 'r':
+                            turn_total += die_roll
+                        elif response == 'h':
+                            self.player_score += turn_total
+                            turn_total = 0
+                        else:
+                            print("Please enter valid response.")
+                else:
+                    turn_total = 0
+                    continue
+                if self.player_score >= 25:
+                    print("You win!")
+                    self.player_score = 0
+                    winner = True
+                    break
+
 def main():
     number_of_players = input('Please enter the number of players: ')
     if number_of_players == '1':
         player = Player('Player 1')
         Game(player).single_player_game()
     elif number_of_players > '1':
-        print('There are', number_of_players, 'players')
+        players = [Player('Player {}'.format(number)) for number in range(number_of_players)]
+        print('There are', players, 'players')
     else:
-        print('Please 1 or higher.')
-
-        print
+        print('Please enter 1 or higher.')
 
 if __name__ == '__main__':
     main()
